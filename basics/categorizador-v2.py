@@ -8,6 +8,8 @@ client= OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 modelo="gpt-3.5-turbo",
 # código omitido
 
+
+
 prompt_sistema = f"""
         Você é um categorizador de produtos.
         Você deve assumir as categorias presentes na lista abaixo.

@@ -1,6 +1,7 @@
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
+import openai
 
 load_dotenv()
 
@@ -37,9 +38,9 @@ def analisador_sentimentos(produto):
         Ponto fortes: lista com três bullets
         Pontos fracos: lista com três bullets
     """
-    
+     
     prompt_usuario = carrega(f"./dados/avaliacoes-{produto}.txt")
-    print(f"Inicou a análise de sentimentos do produto {produto}")
+    print(f"Iniciou a análise de sentimentos do produto {produto}")
 
     lista_mensagens = [
         {
@@ -52,12 +53,19 @@ def analisador_sentimentos(produto):
         }
     ]
 
-    resposta = cliente.chat.completions.create(
-                    messages = lista_mensagens,
-                    model=modelo
-            )
+    try:
+        resposta = cliente.chat.completions.create(
+            messages = lista_mensagens,
+            model=modelo
+        )
 
-    texto_resposta = resposta.choices[0].message.content
-    salva(f"./dados/analise-{produto}.txt", texto_resposta)
-    
-analisador_sentimentos("Maquiagem mineral")
+        texto_resposta = resposta.choices[0].message.content
+        salva(f"./dados/analise-{produto}.txt", texto_resposta)
+    except openai.AuthenticationError as e:
+        print(f"Erro de Autenticação: {e}")
+    except openai.APIError as e:
+        print(f"Erro de API: {e}")
+
+lista_de_produtos = ["Camisetas de algodão orgânico", "Jeans feitos com materiais reciclados", "Maquiagem mineral"]
+for um_produto in lista_de_produtos:
+    analisador_sentimentos(um_produto)
